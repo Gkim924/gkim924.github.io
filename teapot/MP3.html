@@ -1,0 +1,278 @@
+<!DOCTYPE HTML> 
+<html lang="en"> 
+<head>
+<title>MP3 </title>
+<meta charset="utf-8"> 
+</head>
+
+    
+<script id="shader-vs" type="x-shader/x-vertex">
+    attribute vec3 aVertexNormal;
+    attribute vec3 aVertexPosition;
+   
+    uniform mat4 uMVMatrix;
+    uniform mat4 uPMatrix;
+    uniform mat3 uNMatrix;
+    
+    uniform vec3 uLightPosition;
+    uniform vec3 uAmbientLightColor;
+    uniform vec3 uDiffuseLightColor;
+    uniform vec3 uSpecularLightColor;
+    
+    uniform vec3 uKAmbient;
+    uniform vec3 uKDiffuse;
+    uniform vec3 uKSpecular;
+    uniform float uShininess;
+    
+    varying vec4 vColor;
+
+    //************For reflection and refraction***************//
+    varying vec3 R;
+
+    varying vec3 T;
+
+    uniform float reflectToggle;
+
+    uniform float refractToggle;
+
+    uniform mat4 rotNormals;
+
+    varying float reflectFrag;
+
+    uniform vec3 refractVect;
+
+    varying float refractFrag;
+
+
+    //****************************************//
+
+    void main(void) {
+
+    if(reflectToggle == 0.0 && refractToggle == 0.0){
+
+            // Get the vertex position in eye coordinates
+        vec4 vertexPositionEye4 = uMVMatrix * vec4(aVertexPosition, 1.0);
+        vec3 vertexPositionEye3 = vertexPositionEye4.xyz / vertexPositionEye4.w;
+      
+        // Calculate the vector (l) to the light source
+        vec3 lightEye=(vec4(uLightPosition,1)).xyz;
+        vec3 vectorToLightSource = normalize(lightEye - vertexPositionEye3);
+        
+        // Transform the normal (n) to eye coordinates
+        vec3 normalEye = normalize(uNMatrix * aVertexNormal);
+        
+        // Calculate n dot l for diffuse lighting
+        float diffuseLightWeightning = max(dot(normalEye, 
+                                        vectorToLightSource), 0.0);
+                                           
+        // Calculate the reflection vector (r) that is needed for specular light
+        vec3 reflectionVector = normalize(reflect(-vectorToLightSource, 
+                                                 normalEye));
+        
+        // The camera in eye coordinates is located in the origin and is pointing
+        // along the negative z-axis. Calculate viewVector (v) 
+        // in eye coordinates as:
+        // (0.0, 0.0, 0.0) - vertexPositionEye3
+        vec3 viewVectorEye = -normalize(vertexPositionEye3);
+        
+        float rdotv = max(dot(reflectionVector, viewVectorEye), 0.0);
+        
+        float specularLightWeightning = pow(rdotv, uShininess);
+
+        // Sum up all three reflection components and send to the fragment shader
+        vColor = vec4(((uAmbientLightColor*uKAmbient)
+                    + (uDiffuseLightColor*uKDiffuse) * diffuseLightWeightning
+                    + ((uSpecularLightColor*uKSpecular) * specularLightWeightning)),1.0);
+                    
+        gl_Position = uPMatrix*uMVMatrix*vec4(aVertexPosition, 1.0);
+        //vColor=vec4(normalEye,1);
+
+    }
+
+
+    //************For reflection and refraction***************//
+    
+    else {
+
+        if(reflectToggle == 1.0){
+            reflectFrag = 1.0;
+            refractFrag = 0.0;
+        }
+        if(refractToggle == 1.0){
+            refractFrag = 1.0;
+            reflectFrag = 0.0;
+        }
+
+         // Get the vertex position in eye coordinates
+        vec4 vertexPositionEye4 = uMVMatrix * vec4(aVertexPosition, 1.0);
+        vec3 vertexPositionEye3 = vertexPositionEye4.xyz / vertexPositionEye4.w;
+      
+        // Calculate the vector (l) to the light source
+        vec3 lightEye=(vec4(uLightPosition,1)).xyz;
+        vec3 vectorToLightSource = normalize(lightEye - vertexPositionEye3);
+        
+        // Transform the normal (n) to eye coordinates
+        vec3 normalEye = normalize(uNMatrix * aVertexNormal);
+        
+        // Calculate n dot l for diffuse lighting
+        float diffuseLightWeightning = max(dot(normalEye, 
+                                        vectorToLightSource), 0.0);
+                                           
+        // Calculate the reflection vector (r) that is needed for specular light
+        vec3 reflectionVector = normalize(reflect(-vectorToLightSource, 
+                                                 normalEye));
+        
+        // The camera in eye coordinates is located in the origin and is pointing
+        // along the negative z-axis. Calculate viewVector (v) 
+        // in eye coordinates as:
+        // (0.0, 0.0, 0.0) - vertexPositionEye3
+        vec3 viewVectorEye = -normalize(vertexPositionEye3);
+
+        float rdotv = max(dot(reflectionVector, viewVectorEye), 0.0);
+        
+        float specularLightWeightning = pow(rdotv, uShininess);
+
+        // Sum up all three reflection components and send to the fragment shader
+        vColor = vec4(((uAmbientLightColor*uKAmbient)
+                    + (uDiffuseLightColor*uKDiffuse) * diffuseLightWeightning
+                    + ((uSpecularLightColor*uKSpecular) * specularLightWeightning)),1.0);
+
+
+        gl_Position = uPMatrix*uMVMatrix*vec4(aVertexPosition, 1.0);
+        vec4 eyePos = uMVMatrix*vec4(aVertexPosition,1.0);
+        
+        vec4 N = uMVMatrix*vec4(aVertexNormal,1.0);
+
+        vec4 G = rotNormals* vec4(normalEye, 1.0);
+    
+        vec4 refr = -vec4(refractVect, 1.0)*rotNormals;       
+        
+        R = reflect(G.xyz,N.xyz);
+
+        T = refract(-aVertexPosition,-aVertexNormal.xyz,1.53);
+
+    }
+
+    
+    
+    }
+</script>
+  
+<script id="shader-fs" type="x-shader/x-fragment">
+precision mediump float;
+varying vec4 vColor;
+
+
+varying vec3 R;
+
+varying float reflectFrag; 
+
+varying float refractFrag;
+
+uniform samplerCube u_skybox;
+
+varying vec3 T;
+
+
+
+void main(void) {
+
+
+    if(refractFrag == 1.0) {
+
+        vec4 refractColor = textureCube(u_skybox, T);
+        refractColor = mix(refractColor, vec4(1.0,1.0,1.0,1.0), 0.3);
+        gl_FragColor = refractColor;
+
+    }
+
+    else if(reflectFrag == 1.0){
+        
+        vec4 texColor = textureCube(u_skybox, R); 
+        gl_FragColor = texColor;
+
+    }
+
+    else { 
+
+        gl_FragColor = vColor;
+
+    }
+
+ }
+</script>
+
+
+
+
+<script id="shader-vs-cube" type="x-shader/x-vertex">
+   attribute vec3 aVertexPositionCube;
+   attribute vec4 aVertexColorCube;
+
+   varying vec4 v_position;
+
+    uniform mat4 uMVMatrixCube;
+    uniform mat4 uPMatrixCube;
+    varying vec4 vColorCube;
+
+    void main(void) {
+
+        v_position = vec4(aVertexPositionCube, 1.0);
+
+        gl_Position = uPMatrixCube*uMVMatrixCube*vec4(aVertexPositionCube, 1.0);
+        vColorCube = aVertexColorCube;
+    }
+</script>
+
+  
+<script id="shader-fs-cube" type="x-shader/x-fragment">
+precision mediump float;
+
+uniform samplerCube u_skybox;
+uniform mat4 u_viewDirectionProjectionInverse;
+
+varying vec4 v_position;
+
+varying vec4 vColorCube;
+
+
+void main(void) {
+        
+    vec4 t = u_viewDirectionProjectionInverse * v_position;
+    gl_FragColor = textureCube(u_skybox, normalize(t.xyz / t.w));
+
+    //gl_FragColor = vColor;
+ }
+</script>
+
+
+<script src="gl-matrix-min.js"></script> 
+<script src="webgl-utils.js"></script> 
+<script src="TriMesh.js"></script>  
+<script src="MP3.js"></script>   
+<body onload="startup();">
+ <canvas id="myGLCanvas" width="800" height="800"></canvas>
+    <form id="input_form">
+        <fieldset>
+            <legend>Rendering Parameters</legend>
+         <input type="radio" name="primitive" id="wireframe" value="wireframe"> Wireframe
+         <input type="radio" name="primitive" id="polygon" id="polygon" value="polygon" checked> Polygon
+         <input type="radio" name="primitive" id="wirepoly" value="wirepoly" > Polygon with Edges  
+        </fieldset>
+        
+        <fieldset>
+            <legend>View Controls</legend>
+         <emph>Orbit Around Teapot:</emph>  Keys A and D <br><br>
+         <emph>Rotate Teapot:</emph> Left and Right Arrow Keys <br><br>
+        </fieldset>
+        </form>
+
+        <fieldset>
+             <legend>Shading Parameters</legend>
+            <input type="radio" name="primitive" id="phong" value="phong" checked> Phong 
+            <input type="radio" name="primitive" id="reflectButton" value="reflectButton" > Reflection  
+            <input type="radio" name="primitive" id="refractButton" value="refractButton" > Refraction 
+        </fieldset>
+</body>
+
+</html>

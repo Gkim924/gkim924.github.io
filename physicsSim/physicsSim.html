@@ -1,0 +1,176 @@
+<!DOCTYPE HTML>
+<!--
+	Strata by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>Physics Sim</title>
+		<link rel="shortcut icon" type="image/x-icon" href="../images/favicon_io/favicon.ico" />
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../assets/css/main.css" />
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/konpa/devicon@master/devicon.min.css">
+	</head>
+	<body class="is-preload" onload="startup();">
+
+		<!-- Header -->
+			<header id="header">
+				<div>
+					<div class="inner">
+						<a href="#" class="image avatar"><img src="../images/coverPic2.jpg" alt="" /></a>
+						<h1 style="font-size: 3rem;"><strong>Greg Kim</strong></h1>
+						<h1 style="margin-bottom: 0.5em;">Computer Engineer</h1>
+						<h3 style="color: rgba(255, 255, 255, 0.5); margin-bottom: 0;">University of Illinois</h3>
+						<h5 style="color: rgba(255, 255, 255, 0.5);">at Urbana-Champaign</h5>
+						<h1><i>Class of 2020</i></h1>
+					</div>
+			</header>
+
+		<!-- Main -->
+			<div id="main" style="padding-top: 3em;">
+
+				<!-- One -->
+					<section id="one">
+						<header style="margin-bottom: 2rem;" class="major">
+							<h2 style="display:inline">WebGL Physics Simulation</h2>
+							<a href="/index.html" style="float:right;" class="button">Go Back</a>
+						</header>
+						<p>This simple physics engine represents particles as spheres that are procedurally generated and imparted with a random size, position, color, and velocity.</p>
+						<p>More particles are created by interacting with the display and their physics are updated with each frame to show their motion, and collisions with the environment.</p>
+						<ul style="margin-left: 2em;">
+							<li>The new position is calculated using the current velocity and Euler integration</li>
+							<li>The velocity is updated using the acceleration and Euler integration, with drag</li>
+							<li>The acceleration is updated using the force of gravity</li>
+						</ul>
+					</section>
+
+					<div style="float:left; padding-left: 1rem;">
+						<svg width="70" height="70" viewBox="0 0 128 128">
+							<path fill="#F0DB4F" d="M1.408 1.408h125.184v125.185h-125.184z"></path><path fill="#323330" d="M116.347 96.736c-.917-5.711-4.641-10.508-15.672-14.981-3.832-1.761-8.104-3.022-9.377-5.926-.452-1.69-.512-2.642-.226-3.665.821-3.32 4.784-4.355 7.925-3.403 2.023.678 3.938 2.237 5.093 4.724 5.402-3.498 5.391-3.475 9.163-5.879-1.381-2.141-2.118-3.129-3.022-4.045-3.249-3.629-7.676-5.498-14.756-5.355l-3.688.477c-3.534.893-6.902 2.748-8.877 5.235-5.926 6.724-4.236 18.492 2.975 23.335 7.104 5.332 17.54 6.545 18.873 11.531 1.297 6.104-4.486 8.08-10.234 7.378-4.236-.881-6.592-3.034-9.139-6.949-4.688 2.713-4.688 2.713-9.508 5.485 1.143 2.499 2.344 3.63 4.26 5.795 9.068 9.198 31.76 8.746 35.83-5.176.165-.478 1.261-3.666.38-8.581zm-46.885-37.793h-11.709l-.048 30.272c0 6.438.333 12.34-.714 14.149-1.713 3.558-6.152 3.117-8.175 2.427-2.059-1.012-3.106-2.451-4.319-4.485-.333-.584-.583-1.036-.667-1.071l-9.52 5.83c1.583 3.249 3.915 6.069 6.902 7.901 4.462 2.678 10.459 3.499 16.731 2.059 4.082-1.189 7.604-3.652 9.448-7.401 2.666-4.915 2.094-10.864 2.07-17.444.06-10.735.001-21.468.001-32.237z"></path>
+							</svg>
+							<svg width="70" height="70" viewBox="0 0 128 128">
+								<path fill="#E44D26" d="M27.854 116.354l-8.043-90.211h88.378l-8.051 90.197-36.192 10.033z"></path><path fill="#F16529" d="M64 118.704l29.244-8.108 6.881-77.076h-36.125z"></path><path fill="#EBEBEB" d="M64 66.978h-14.641l-1.01-11.331h15.651v-11.064h-27.743l.264 2.969 2.72 30.489h24.759zM64 95.711l-.049.013-12.321-3.328-.788-8.823h-11.107l1.55 17.372 22.664 6.292.051-.015z"></path><path d="M28.034 1.627h5.622v5.556h5.144v-5.556h5.623v16.822h-5.623v-5.633h-5.143v5.633h-5.623v-16.822zM51.816 7.206h-4.95v-5.579h15.525v5.579h-4.952v11.243h-5.623v-11.243zM64.855 1.627h5.862l3.607 5.911 3.603-5.911h5.865v16.822h-5.601v-8.338l-3.867 5.981h-.098l-3.87-5.981v8.338h-5.502v-16.822zM86.591 1.627h5.624v11.262h7.907v5.561h-13.531v-16.823z"></path><path fill="#fff" d="M63.962 66.978v11.063h13.624l-1.284 14.349-12.34 3.331v11.51l22.682-6.286.166-1.87 2.6-29.127.27-2.97h-2.982zM63.962 44.583v11.064h26.725l.221-2.487.505-5.608.265-2.969z"></path>
+								</svg> 
+								<svg width="70" height="70" viewBox="0 0 128 128">
+									<path fill="#D26383" d="M115.4 30.7l-48.3-27.8c-.8-.5-1.9-.7-3.1-.7-1.2 0-2.3.3-3.1.7l-48 27.9c-1.7 1-2.9 3.5-2.9 5.4v55.7c0 1.1.2 2.4 1 3.5l106.8-62c-.6-1.2-1.5-2.1-2.4-2.7z"></path><path fill="#9C033A" d="M10.7 95.3c.5.8 1.2 1.5 1.9 1.9l48.2 27.9c.8.5 1.9.7 3.1.7 1.2 0 2.3-.3 3.1-.7l48-27.9c1.7-1 2.9-3.5 2.9-5.4v-55.7c0-.9-.1-1.9-.6-2.8l-106.6 62z"></path><path fill="#fff" d="M85.3 76.1c-4.2 7.4-12.2 12.4-21.3 12.4-13.5 0-24.5-11-24.5-24.5s11-24.5 24.5-24.5c9.1 0 17.1 5 21.3 12.5l13-7.5c-6.8-11.9-19.6-20-34.3-20-21.8 0-39.5 17.7-39.5 39.5s17.7 39.5 39.5 39.5c14.6 0 27.4-8 34.2-19.8l-12.9-7.6z"></path><path d="M82.1 61.8h5.2v-5.3h4.4v5.3h5.3v4.4h-5.3v5.2h-4.4v-5.2h-5.2v-4.4zM100.6 61.8h5.2v-5.3h4.4v5.3h5.3v4.4h-5.3v5.2h-4.4v-5.2h-5.2v-4.4z"></path>
+									</svg>
+							<img src="/images/icons8-webgl-100.png">
+						</div>
+					<div style="text-align: center;">
+						<h2 style="display: contents; padding-left: 5rem; padding-right: 1rem;">Find this project on:</h2>
+						<a href="https://github.com/Gkim924/Physics-Simulation" target="_blank"><i style="font-size: 4rem; padding-left: 1rem;" class="devicon-github-plain-wordmark colored"></i></a>
+						</div>
+
+				<!-- Two -->
+					<section id="two" style="margin-top: 1em; padding-top: 1em;">
+
+						<!-- <h2 style="text-align: center; margin-bottom: 0.5rem;">Controls:</h2> -->
+						<!-- <p style="text-align: center;">Press <strong>Spacebar</strong> to generate a sphere | Press <strong>R</strong> to reset the simulation</p> -->
+						<div style="text-align: center;">
+						<a href="#/" style="display: inline; margin-right: 1rem;" class="button primary fit generate" role="button">Generate a Sphere</a>
+						<a href="#/" style="display: inline;" class="button primary fit reset" role="button">Reset the Simulation</a>
+						</div>
+						<canvas style="display:block; padding-left:0; padding-right:0; margin-left:auto; margin-right: auto;" id="myGLCanvas" width="800" height="500" ></canvas>
+						
+					</section>
+
+		<!-- Footer -->
+			<footer id="footer">
+				<div class="inner">
+					<ul class="icons">
+						<li><a href="https://www.linkedin.com/in/gregory-kim-307b9a190/" target="_blank" class="icon brands fa-linkedin"><span class="label">Twitter</span></a></li>
+						<li><a href="https://github.com/Gkim924" target="_blank" class="icon brands fa-github"><span class="label">Github</span></a></li>
+						<!-- <li><a href="#" class="icon brands fa-dribbble"><span class="label">Dribbble</span></a></li>
+						<li><a href="#" class="icon solid fa-envelope"><span class="label">Email</span></a></li> -->
+					</ul>
+					<ul class="copyright">
+						<li>&copy; GK</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+				</div>
+			</footer>
+
+		<!-- Scripts -->
+			<script src="../assets/js/jquery.min.js"></script>
+			<script src="../assets/js/jquery.poptrox.min.js"></script>
+			<script src="../assets/js/browser.min.js"></script>
+			<script src="../assets/js/breakpoints.min.js"></script>
+			<script src="../assets/js/util.js"></script>
+			<script src="../assets/js/main.js"></script>
+
+			<!-- Scripts for Simulation -->
+			<script id="shader-gouraud-phong-vs" type="x-shader/x-vertex">
+				attribute vec3 aVertexNormal;
+				attribute vec3 aVertexPosition;
+				
+				 uniform mat4 uMVMatrix;
+				 uniform mat4 uPMatrix;
+				 uniform mat3 uNMatrix;
+				 uniform vec3 uLightPosition;
+				 uniform vec3 uAmbientLightColor;
+				 uniform vec3 uDiffuseLightColor;
+				 uniform vec3 uSpecularLightColor;
+				 uniform vec3 uAmbientMaterialColor;
+				 uniform vec3 uDiffuseMaterialColor;
+				 uniform vec3 uSpecularMaterialColor;
+				 
+				 uniform float uShininess;
+				 
+				 varying vec4 vColor;
+			 
+				 void main(void) {
+				 
+				 // Get the vertex position in eye coordinates
+				 vec4 vertexPositionEye4 = uMVMatrix * vec4(aVertexPosition, 1.0);
+				 vec3 vertexPositionEye3 = vertexPositionEye4.xyz / vertexPositionEye4.w;
+			   
+				 // Calculate the vector (l) to the light source
+				 vec3 vectorToLightSource = normalize(uLightPosition - vertexPositionEye3);
+				 
+				 // Transform the normal (n) to eye coordinates
+				 vec3 normalEye = normalize(uNMatrix * aVertexNormal);
+				 
+				 // Calculate n dot l for diffuse lighting
+				 float diffuseLightWeightning = max(dot(normalEye, 
+												 vectorToLightSource), 0.0);
+													
+				 // Calculate the reflection vector (r) that is needed for specular light
+				 vec3 reflectionVector = normalize(reflect(-vectorToLightSource, 
+														  normalEye));
+				 
+				 // The camera in eye coordinates is located in the origin and is pointing
+				 // along the negative z-axis. Calculate viewVector (v) 
+				 // in eye coordinates as:
+				 // (0.0, 0.0, 0.0) - vertexPositionEye3
+				 vec3 viewVectorEye = -normalize(vertexPositionEye3);
+				 
+				 float rdotv = max(dot(reflectionVector, viewVectorEye), 0.0);
+				 
+				 float specularLightWeightning = pow(rdotv, uShininess);
+			 
+				 // Sum up all three reflection components and send to the fragment shader
+				 vColor = vec4(((uAmbientLightColor*uAmbientMaterialColor)
+							 + (uDiffuseLightColor*uDiffuseMaterialColor) * diffuseLightWeightning
+							 + (uSpecularLightColor*uSpecularMaterialColor) * specularLightWeightning),1.0);
+				 
+				  gl_Position = uPMatrix*uMVMatrix*vec4(aVertexPosition, 1.0);
+					 
+				 }
+			 </script>
+			   
+			 <script id="shader-gouraud-phong-fs" type="x-shader/x-fragment">
+			 precision mediump float;
+			 varying vec4 vColor;
+			 void main(void) {
+					 gl_FragColor = vColor;
+			  }
+			 </script>
+
+			<script src="gl-matrix-min.js"></script> 
+			<script src="webgl-utils.js"></script>
+			<script src="simpleModeling.js"></script>  
+			<script src="MP4.js"></script>
+
+	</body>
+</html>
